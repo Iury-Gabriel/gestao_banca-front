@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://gestao-banca.onrender.com/api';
 
 // Toast utility
 function showToast(message, type = 'success') {
