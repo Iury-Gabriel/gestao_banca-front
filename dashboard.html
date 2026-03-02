@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BACBO Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="toast-container"></div>
+    <div class="container">
+        <header class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1 style="font-size: 1.25rem; font-weight: 800;">BACBO MANAGER</h1>
+                <button id="logout-btn"
+                    style="background: none; border: none; color: var(--loss-red); cursor: pointer; font-weight: 600;">Sair</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs-nav">
+            <button class="tab-btn active" data-target="dashboard-view">Dashboard</button>
+            <button class="tab-btn" data-target="ebook-view">Iniciantes (E-book)</button>
+        </nav>
+
+        <!-- Dashboard View Section -->
+        <div id="dashboard-view" class="view-section active">
+            <!-- Banner Carousel -->
+            <div class="swiper banner-carousel">
+                <div class="swiper-wrapper" id="banner-wrapper">
+                    <!-- Slides will be injected here -->
+                    <div class="swiper-slide"
+                        style="background: var(--card-bg); display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                        Carregando banners...
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- Bankroll Summary Card -->
+            <div class="summary-card">
+                <div class="stat-label text-center">Banca Atual</div>
+                <div class="bankroll-value" id="current-bankroll">R$ 0,00</div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Entrada</div>
+                        <div class="stat-value profit" id="stake-value">R$ 0,00</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Meta</div>
+                        <div class="stat-value profit" id="stop-win-value">R$ 0,00</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Stop</div>
+                        <div class="stat-value loss" id="stop-loss-value">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="text-center" style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
+                    Dia <span id="current-day">1</span> • Meta: <span id="daily-perc">0</span>%
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-success" id="hit-stop-win">Bati Meta (W)</button>
+                <button class="btn btn-danger" id="hit-stop-loss">Stop Loss (L)</button>
+                <button class="btn btn-primary btn-full" id="open-manual">Lançar Resultado Manual</button>
+                <button class="btn btn-ghost btn-full" id="open-settings" style="margin-top: 0;">Configurar
+                    Gerenciamento</button>
+            </div>
+
+            <!-- Profit Evolution Graph -->
+            <div class="chart-section">
+                <h2 class="chart-title">Evolução do Lucro</h2>
+                <div class="chart-container">
+                    <canvas id="profitChart"></canvas>
+                </div>
+            </div>
+
+            <!-- History Table -->
+            <div class="history-section">
+                <h2 class="history-title">Histórico Recente</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">Dia</th>
+                                <th style="width: 80px;">Banca In.</th>
+                                <th>Resultado</th>
+                                <th style="width: 60px;">Status</th>
+                                <th>Data/Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body">
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- E-book View Section -->
+        <div id="ebook-view" class="view-section">
+            <div class="ebook-card">
+                <div class="ebook-icon">📚</div>
+                <h2 class="ebook-title">Guia para Iniciantes</h2>
+                <p class="ebook-desc">Aprenda o básico do BACBO e como começar a lucrar com estratégias sólidas.</p>
+
+                <div class="ebook-preview">
+                    <span>BACBO Básico para Iniciantes</span>
+                </div>
+
+                <a href="https://drive.google.com/file/d/1DACg2YHRyS5LlJrbMGf0zGLdiie0Qrdu/view?usp=sharing"
+                    target="_blank" class="btn btn-primary">
+                    Baixar E-book (PDF)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Result Modal -->
+    <div class="modal" id="modal-result">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem;">Manual Result</h2>
+            <div class="form-group">
+                <label>Valor líquido do lucro/perda (R$)</label>
+                <input type="number" id="manual-value" class="form-control" placeholder="Ex: 50 ou -50" step="0.01">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" id="save-manual">Salvar</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('modal-result').classList.remove('active')"
+                    style="margin-top: 0;">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="modal-settings">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem;">Configurações</h2>
+            <div class="form-group">
+                <label>Porcentagem Entrada (%)</label>
+                <input type="number" id="set-daily" class="form-control" step="0.1">
+            </div>
+            <div class="form-group">
+                <label>Meta Diária (%)</label>
+                <input type="number" id="set-win" class="form-control" step="0.1">
+            </div>
+            <div class="form-group">
+                <label>Stop Loss (%)</label>
+                <input type="number" id="set-loss" class="form-control" step="0.1">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" id="save-settings">Salvar</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('modal-settings').classList.remove('active')"
+                    style="margin-top: 0;">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div class="modal" id="modal-confirm">
+        <div class="confirm-modal-content">
+            <p class="confirm-text" id="confirm-message">Deseja confirmar esta ação?</p>
+            <div class="confirm-actions">
+                <button class="btn btn-primary" id="confirm-ok">Confirmar</button>
+                <button class="btn btn-ghost" id="confirm-cancel" style="margin-top: 0;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="dashboard.js"></script>
+    <script type="module" src="carousel.js"></script>
+</body>
+
+</html>
