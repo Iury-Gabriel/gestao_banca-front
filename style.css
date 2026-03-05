@@ -110,6 +110,11 @@ body {
     color: white;
 }
 
+.btn-warning {
+    background-color: #F59E0B;
+    color: white;
+}
+
 .btn-ghost {
     background-color: transparent;
     color: var(--text-secondary);

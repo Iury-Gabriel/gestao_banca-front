@@ -73,7 +73,8 @@
             <div class="action-buttons">
                 <button class="btn btn-success" id="hit-stop-win">Bati Meta (W)</button>
                 <button class="btn btn-danger" id="hit-stop-loss">Stop Loss (L)</button>
-                <button class="btn btn-primary btn-full" id="open-manual">Lançar Resultado Manual</button>
+                <button class="btn btn-primary" id="open-manual">Manual</button>
+                <button class="btn btn-warning" id="open-withdraw">Sacar</button>
                 <button class="btn btn-ghost btn-full" id="open-settings" style="margin-top: 0;">Configurar
                     Gerenciamento</button>
             </div>
@@ -139,6 +140,23 @@
                 <button class="btn btn-primary" id="save-manual">Salvar</button>
                 <button class="btn btn-ghost"
                     onclick="document.getElementById('modal-result').classList.remove('active')"
+                    style="margin-top: 0;">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal" id="modal-withdraw">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem;">Sacar da Banca</h2>
+            <div class="form-group">
+                <label>Quanto deseja sacar? (R$)</label>
+                <input type="number" id="withdraw-value" class="form-control" placeholder="Ex: 100.00" step="0.01">
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-warning" id="save-withdraw">Confirmar Saque</button>
+                <button class="btn btn-ghost"
+                    onclick="document.getElementById('modal-withdraw').classList.remove('active')"
                     style="margin-top: 0;">Voltar</button>
             </div>
         </div>

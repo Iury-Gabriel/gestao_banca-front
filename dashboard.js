@@ -92,12 +92,19 @@ async function loadHistory() {
         historyBody.innerHTML = '';
         history.forEach((item) => {
             const row = document.createElement('tr');
-            const statusClass = item.amount >= 0 ? 'profit' : 'loss';
+            let statusClass = item.amount >= 0 ? 'profit' : 'loss';
+            let typeLabel = item.type;
+
+            if (item.type === 'WITHDRAW') {
+                statusClass = 'loss'; // Withdrawals are shown as "loss" color (red) because they decrease bankroll
+                typeLabel = 'SAQUE';
+            }
+
             row.innerHTML = `
                 <td>#</td>
                 <td>R$ ${item.balance_before.toFixed(2)}</td>
-                <td class="${statusClass}">R$ ${item.amount.toFixed(2)}</td>
-                <td class="${statusClass}">${item.type}</td>
+                <td class="${statusClass}">R$ ${Math.abs(item.amount).toFixed(2)}</td>
+                <td class="${statusClass}">${typeLabel}</td>
                 <td style="font-size: 0.75rem; color: var(--text-secondary);">${formatDate(item.created_at)}</td>
             `;
             historyBody.appendChild(row);
@@ -159,8 +166,11 @@ async function saveResult(type, amount) {
             headers: getHeaders(),
             body: JSON.stringify({ type, amount })
         });
-        if (!response.ok) throw new Error('Erro ao salvar resultado');
-        showToast('Resultado salvo!', 'success');
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error || 'Erro ao salvar resultado');
+        }
+        showToast(type === 'WITHDRAW' ? 'Saque realizado!' : 'Resultado salvo!', 'success');
         setTimeout(() => location.reload(), 1000);
     } catch (error) {
         showToast(error.message, 'error');
@@ -185,7 +195,17 @@ document.getElementById('save-manual').addEventListener('click', () => {
 });
 
 document.getElementById('open-manual').addEventListener('click', () => {
-    modalResult.classList.add('active');
+    document.getElementById('modal-result').classList.add('active');
+});
+
+document.getElementById('open-withdraw').addEventListener('click', () => {
+    document.getElementById('modal-withdraw').classList.add('active');
+});
+
+document.getElementById('save-withdraw').addEventListener('click', () => {
+    const val = parseFloat(document.getElementById('withdraw-value').value);
+    if (isNaN(val) || val <= 0) return showToast("Insira um valor válido para saque.", "error");
+    saveResult('WITHDRAW', val);
 });
 
 document.getElementById('open-settings').addEventListener('click', () => {
